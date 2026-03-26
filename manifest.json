@@ -1,0 +1,15 @@
+{
+  "name": "Kandal Gym Quiz",
+  "short_name": "KandalQuiz",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#8b2331",
+  "icons": [
+    {
+      "src": "logo_kandal.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

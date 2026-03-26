@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kandal Gym: Elite Quiz</title>
+    
+    <meta name="theme-color" content="#8b2331">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="logo_kandal.png">
+
     <style>
         :root {
-            /* CORES ATUALIZADAS KANDAL GYM */
             --kandal-vinho: #8b2331; 
             --kandal-rosa: #d8a3a9;
             --dark-bg: #121212;
@@ -39,7 +43,6 @@
             max-width: 450px;
             height: 90vh;
             background: var(--dark-bg);
-            /* Borda alterada para Vinho */
             border: 4px solid var(--kandal-vinho);
             border-radius: 40px;
             position: relative;
@@ -69,13 +72,7 @@
         }
 
         .header { text-align: center; margin-bottom: 20px; }
-        
-        /* Estilo do Logo */
-        .logo-main {
-            width: 180px;
-            height: auto;
-            margin-bottom: 10px;
-        }
+        .logo-main { width: 180px; height: auto; margin-bottom: 10px; }
 
         .btn-premium {
             background: transparent;
@@ -97,6 +94,24 @@
             border-color: var(--kandal-rosa);
         }
 
+        /* OCULTAR BOTÃO ADMIN NO SMARTPHONE */
+        .btn-admin-hidden {
+            border: none; 
+            color: var(--silver); 
+            font-size: 0.7rem; 
+            margin-top: 20px; 
+            opacity: 0.5;
+            background: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .btn-admin-hidden {
+                display: none !important;
+            }
+        }
+
         .input-premium {
             background: #222;
             border: 1px solid #444;
@@ -109,24 +124,11 @@
 
         .input-premium:focus { border-color: var(--kandal-vinho); outline: none; }
 
-        /* Grid Configuração */
         .config-grid { display: grid; grid-template-columns: 1fr; gap: 30px; }
         @media (min-width: 800px) { .config-grid { grid-template-columns: 1.2fr 0.8fr; } }
 
-        .option-input-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-
-        .radio-correct {
-            accent-color: var(--kandal-vinho);
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-        }
-
+        .option-input-group { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .radio-correct { accent-color: var(--kandal-vinho); width: 20px; height: 20px; cursor: pointer; }
         .stats-bar { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--silver); margin-bottom: 10px; }
         .progress-bar { width: 100%; height: 4px; background: #333; border-radius: 2px; margin-bottom: 30px; }
         .progress-fill { height: 100%; background: var(--kandal-vinho); width: 0%; transition: width 0.4s; }
@@ -186,7 +188,7 @@
             </table>
         </div>
 
-        <button class="btn-premium" onclick="checkAccess()" style="border: none; color: var(--silver); font-size: 0.7rem; margin-top: 20px; opacity: 0.5;">Acesso Admin</button>
+        <button class="btn-admin-hidden" onclick="checkAccess()">Acesso Admin</button>
         <div class="footer-logo">KANDAL GYM PREMIUM GAINS 2026</div>
     </div>
 
@@ -195,98 +197,64 @@
             <img src="logo_kandal.png" alt="Logo" style="width: 100px; margin-bottom: 10px;">
             <h1 style="color: var(--kandal-vinho); font-size: 1.5rem;">Gestão de Dados</h1>
         </div>
-        
         <div class="config-grid">
             <div class="config-box">
                 <h3 style="color: var(--kandal-vinho); margin-bottom: 15px;">Nova Pergunta</h3>
-                <label style="font-size: 0.8rem; display: block; margin-bottom: 5px;">Enunciado:</label>
-                <input type="text" id="new-q" class="input-premium" placeholder="Ex: Qual a função principal da Creatina?">
-                
-                <label style="font-size: 0.8rem; display: block; margin-bottom: 10px;">Opções (Assinale a correta):</label>
-                
+                <input type="text" id="new-q" class="input-premium" placeholder="Enunciado da pergunta">
                 <div id="options-inputs">
-                    <div class="option-input-group">
-                        <input type="radio" name="correct-choice" value="0" class="radio-correct" checked>
-                        <input type="text" class="input-premium opt-val" style="margin-bottom:0" placeholder="Opção 1">
-                    </div>
-                    <div class="option-input-group">
-                        <input type="radio" name="correct-choice" value="1" class="radio-correct">
-                        <input type="text" class="input-premium opt-val" style="margin-bottom:0" placeholder="Opção 2">
-                    </div>
-                    <div class="option-input-group">
-                        <input type="radio" name="correct-choice" value="2" class="radio-correct">
-                        <input type="text" class="input-premium opt-val" style="margin-bottom:0" placeholder="Opção 3">
-                    </div>
-                    <div class="option-input-group">
-                        <input type="radio" name="correct-choice" value="3" class="radio-correct">
-                        <input type="text" class="input-premium opt-val" style="margin-bottom:0" placeholder="Opção 4">
-                    </div>
+                    <div class="option-input-group"><input type="radio" name="correct-choice" value="0" class="radio-correct" checked><input type="text" class="input-premium opt-val" placeholder="Opção 1"></div>
+                    <div class="option-input-group"><input type="radio" name="correct-choice" value="1" class="radio-correct"><input type="text" class="input-premium opt-val" placeholder="Opção 2"></div>
+                    <div class="option-input-group"><input type="radio" name="correct-choice" value="2" class="radio-correct"><input type="text" class="input-premium opt-val" placeholder="Opção 3"></div>
+                    <div class="option-input-group"><input type="radio" name="correct-choice" value="3" class="radio-correct"><input type="text" class="input-premium opt-val" placeholder="Opção 4"></div>
                 </div>
-
-                <button class="btn-premium" onclick="addQuestion()" style="margin-top: 15px; background: var(--kandal-vinho); color: white; border: none;">Publicar Pergunta</button>
+                <button class="btn-premium" onclick="addQuestion()" style="background: var(--kandal-vinho); color: white;">Publicar Pergunta</button>
             </div>
-
             <div class="config-box">
                 <h3 style="color: var(--kandal-vinho); margin-bottom: 15px;">Banco de Perguntas</h3>
-                <div id="questions-list" style="max-height: 400px; overflow-y: auto; padding-right: 5px;"></div>
+                <div id="questions-list"></div>
             </div>
         </div>
-        
-        <button class="btn-premium" onclick="hideConfig()" style="margin-top: 30px; border-color: var(--silver); color: var(--silver);">Voltar ao Início</button>
+        <button class="btn-premium" onclick="hideConfig()" style="margin-top: 30px;">Voltar ao Início</button>
     </div>
 
     <div id="game-screen" class="screen">
-        <div class="stats-bar">
-            <span id="question-number">Série 1/5</span>
-            <span id="score-display">🏆 0</span>
-        </div>
+        <div class="stats-bar"><span id="question-number">Série 1/5</span><span id="score-display">🏆 0</span></div>
         <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
         <div id="question-container">
-            <p id="question-text" style="font-size: 1.3rem; text-align: center; margin-bottom: 30px; font-weight: 300;"></p>
+            <p id="question-text" style="font-size: 1.3rem; text-align: center; margin-bottom: 30px;"></p>
             <div id="options-quiz"></div>
         </div>
     </div>
 
     <div id="result-screen" class="screen" style="text-align: center;">
-        <div class="header">
-            <img src="logo_kandal.png" alt="Logo" style="width: 150px; margin-bottom: 20px;">
-            <h1 style="color: var(--kandal-vinho);">SESSÃO FINALIZADA</h1>
-        </div>
-        <h2 id="result-rank" style="color: var(--kandal-rosa); margin-bottom: 10px; font-size: 2rem;"></h2>
-        <p id="result-score" style="font-size: 1.5rem; margin-bottom: 30px; opacity: 0.8;"></p>
-        <button class="btn-premium" onclick="location.reload()">Sair do Perfil</button>
+        <div class="header"><img src="logo_kandal.png" alt="Logo" style="width: 150px;"><h1 style="color: var(--kandal-vinho);">FINALIZADO</h1></div>
+        <h2 id="result-rank" style="color: var(--kandal-rosa);"></h2>
+        <p id="result-score"></p>
+        <button class="btn-premium" onclick="location.reload()">Sair</button>
     </div>
-
 </div>
 
 <script>
+    // Registo do Service Worker para PWA
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').then(() => console.log("PWA Ativa"));
+    }
+
     const _0x5f21 = "YWRtaW4xMjM="; 
-
     let questions = JSON.parse(localStorage.getItem('iron_questions')) || [
-        { q: "Qual o termo para o aumento do volume via sarcoplasma?", options: ["Hipertrofia Sarcoplasmática", "Hipertrofia Miofibrilar", "Hiperplasia", "Atrofia"], correct: 0 },
-        { q: "Qual o rei da cadeia posterior?", options: ["Leg Extension", "Bicep Curl", "Deadlift", "Chest Press"], correct: 2 }
+        { q: "Qual o macronutriente principal para reparação?", options: ["Hidratos", "Gorduras", "Proteína", "Fibras"], correct: 2 }
     ];
-
     let highscores = JSON.parse(localStorage.getItem('iron_scores')) || [];
-    let currentQuestionIndex = 0;
-    let score = 0;
-    let currentPlayer = "";
+    let currentQuestionIndex = 0; let score = 0; let currentPlayer = "";
 
     window.onload = renderMainLeaderboard;
 
     function renderMainLeaderboard() {
         const body = document.querySelector('#main-leaderboard tbody');
-        body.innerHTML = highscores.slice(0, 5).map(h => `
-            <tr><td>${h.name}</td><td>${h.score}</td><td>${h.date}</td></tr>
-        `).join('') || '<tr><td colspan="3" style="text-align:center; opacity:0.5">Sem registos de elite</td></tr>';
+        body.innerHTML = highscores.slice(0, 5).map(h => `<tr><td>${h.name}</td><td>${h.score}</td><td>${h.date}</td></tr>`).join('') || '<tr><td colspan="3">Sem registos</td></tr>';
     }
 
     function checkAccess() {
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        if (isMobile) {
-            alert("SISTEMA BLOQUEADO: Utilize um PC para gerir o banco de dados.");
-            return;
-        }
         const pass = prompt("Chave Admin:");
         if (btoa(pass) === _0x5f21) showConfig();
     }
@@ -307,9 +275,7 @@
 
     function startGame() {
         currentPlayer = document.getElementById('player-name').value.trim();
-        if (!currentPlayer) return alert("Identifique-se para iniciar o registo.");
-        if (questions.length === 0) return alert("Banco de dados vazio.");
-        
+        if (!currentPlayer) return alert("Insere o teu nome.");
         score = 0; currentQuestionIndex = 0;
         document.getElementById('start-screen').classList.remove('active');
         document.getElementById('game-screen').classList.add('active');
@@ -325,8 +291,7 @@
         optionsDiv.innerHTML = '';
         q.options.forEach((opt, index) => {
             const btn = document.createElement('button');
-            btn.className = 'quiz-option';
-            btn.innerText = opt;
+            btn.className = 'quiz-option'; btn.innerText = opt;
             btn.onclick = () => checkAnswer(index, btn);
             optionsDiv.appendChild(btn);
         });
@@ -336,16 +301,9 @@
         const correct = questions[currentQuestionIndex].correct;
         const allBtns = document.querySelectorAll('.quiz-option');
         allBtns.forEach(b => b.style.pointerEvents = 'none');
-
-        if (selected === correct) {
-            btn.classList.add('correct');
-            score += 200;
-            document.getElementById('score-display').innerText = `🏆 ${score}`;
-        } else {
-            btn.classList.add('wrong');
-            allBtns[correct].classList.add('correct');
-        }
-
+        if (selected === correct) { btn.classList.add('correct'); score += 200; } 
+        else { btn.classList.add('wrong'); allBtns[correct].classList.add('correct'); }
+        document.getElementById('score-display').innerText = `🏆 ${score}`;
         setTimeout(() => {
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) showQuestion();
@@ -357,58 +315,33 @@
         document.getElementById('game-screen').classList.remove('active');
         document.getElementById('result-screen').classList.add('active');
         document.getElementById('result-score').innerText = `${currentPlayer} • ${score} PTS`;
-        
-        highscores.push({
-            name: currentPlayer,
-            score: score,
-            date: new Date().toLocaleDateString()
-        });
+        highscores.push({ name: currentPlayer, score: score, date: new Date().toLocaleDateString() });
         highscores.sort((a, b) => b.score - a.score);
         localStorage.setItem('iron_scores', JSON.stringify(highscores));
-
-        let rank = score >= (questions.length * 200 * 0.8) ? "KANDAL LEGEND" : score >= (questions.length * 200 * 0.5) ? "ELITE ATHLETE" : "CASUAL TRAINER";
-        document.getElementById('result-rank').innerText = rank;
+        document.getElementById('result-rank').innerText = score >= (questions.length * 160) ? "KANDAL LEGEND" : "ATHLETE";
     }
 
     function addQuestion() {
         const q = document.getElementById('new-q').value.trim();
         const optElements = document.querySelectorAll('.opt-val');
         const correctIdx = parseInt(document.querySelector('input[name="correct-choice"]:checked').value);
-        
-        const opts = [];
-        optElements.forEach(el => {
-            if(el.value.trim()) opts.push(el.value.trim());
-        });
-
+        const opts = []; optElements.forEach(el => { if(el.value.trim()) opts.push(el.value.trim()); });
         if(q && opts.length >= 2) {
             questions.push({ q, options: opts, correct: correctIdx });
             localStorage.setItem('iron_questions', JSON.stringify(questions));
             renderQuestionList();
-            
             document.getElementById('new-q').value = "";
             optElements.forEach(el => el.value = "");
-            alert("Pergunta publicada com sucesso!");
-        } else {
-            alert("Preencha a pergunta e pelo menos duas opções.");
-        }
-    }
-
-    function removeQuestion(index) {
-        if(confirm("Deseja eliminar este registo do banco de dados?")) {
-            questions.splice(index, 1);
-            localStorage.setItem('iron_questions', JSON.stringify(questions));
-            renderQuestionList();
         }
     }
 
     function renderQuestionList() {
         const list = document.getElementById('questions-list');
-        list.innerHTML = questions.map((q, i) => `
-            <div class="q-list-item">
-                <span title="${q.q}"><strong>#${i+1}</strong> ${q.q.substring(0, 35)}${q.q.length > 35 ? '...' : ''}</span>
-                <button onclick="removeQuestion(${i})" style="color:var(--error); background:none; border:none; cursor:pointer; font-weight:bold;">EXCLUIR</button>
-            </div>
-        `).join('');
+        list.innerHTML = questions.map((q, i) => `<div class="q-list-item"><span>#${i+1} ${q.q.substring(0, 20)}...</span><button onclick="removeQuestion(${i})" style="color:var(--error); background:none; border:none;">X</button></div>`).join('');
+    }
+
+    function removeQuestion(i) {
+        questions.splice(i, 1); localStorage.setItem('iron_questions', JSON.stringify(questions)); renderQuestionList();
     }
 </script>
 
