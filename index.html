@@ -83,16 +83,13 @@
             width: 100%;
         }
 
-        .btn-premium:hover { 
-            background: var(--kandal-vinho); 
-            color: white; 
-        }
+        .btn-premium:hover { background: var(--kandal-vinho); color: white; }
 
+        /* OCULTAR ADMIN NO SMARTPHONE */
         .btn-admin-hidden {
             border: none; color: var(--silver); font-size: 0.7rem; 
             margin-top: 20px; opacity: 0.5; background: none; cursor: pointer; width: 100%;
         }
-
         @media (max-width: 768px) { .btn-admin-hidden { display: none !important; } }
 
         .input-premium {
@@ -103,27 +100,30 @@
         .config-grid { display: grid; grid-template-columns: 1fr; gap: 30px; }
         @media (min-width: 800px) { .config-grid { grid-template-columns: 1.2fr 0.8fr; } }
 
-        .option-input-group { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-        
-        /* ESTILO LISTA DE PERGUNTAS COM REORDENAÇÃO */
+        /* ESTILO LISTA DE PERGUNTAS (VER TEXTO TODO) */
         .q-list-item {
             background: #222;
-            padding: 12px;
-            margin-bottom: 8px;
-            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 12px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.8rem;
-            border-left: 3px solid var(--kandal-vinho);
+            flex-direction: column;
+            gap: 10px;
+            border-left: 4px solid var(--kandal-vinho);
         }
 
-        .order-controls { display: flex; gap: 5px; }
+        .q-text-full { font-size: 0.9rem; line-height: 1.4; word-break: break-word; }
+
+        .order-controls { 
+            display: flex; gap: 8px; justify-content: flex-end; 
+            border-top: 1px solid #333; padding-top: 8px;
+        }
+
         .btn-order {
             background: #333; color: white; border: none; 
-            padding: 5px 8px; border-radius: 4px; cursor: pointer;
+            padding: 5px 12px; border-radius: 4px; cursor: pointer;
         }
-        .btn-order:hover { background: var(--kandal-vinho); }
+        .btn-order:hover:not(:disabled) { background: var(--kandal-vinho); }
 
         .stats-bar { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--silver); margin-bottom: 10px; }
         .progress-bar { width: 100%; height: 4px; background: #333; border-radius: 2px; margin-bottom: 30px; }
@@ -155,6 +155,7 @@
         </div>
         <input type="text" id="player-name" class="input-premium" style="text-align: center;" placeholder="NOME DO ATLETA">
         <button class="btn-premium" onclick="startGame()">Iniciar Protocolo</button>
+        
         <div style="margin-top: 30px;">
             <h3 style="color: var(--kandal-vinho); font-size: 0.9rem; margin-bottom: 10px; text-align: center;">🏆 TOP PERFORMERS</h3>
             <table id="main-leaderboard">
@@ -174,38 +175,38 @@
         <div class="config-grid">
             <div class="config-box">
                 <h3 style="color: var(--kandal-vinho); margin-bottom: 15px;">Nova Pergunta</h3>
-                <input type="text" id="new-q" class="input-premium" placeholder="Pergunta">
+                <input type="text" id="new-q" class="input-premium" placeholder="Escreva aqui a pergunta completa...">
                 <div id="options-inputs">
                     <div class="option-input-group"><input type="radio" name="correct-choice" value="0" checked><input type="text" class="input-premium opt-val" style="margin-bottom:0" placeholder="Opção 1"></div>
                     <div class="option-input-group"><input type="radio" name="correct-choice" value="1"><input type="text" class="input-premium opt-val" style="margin-bottom:0" placeholder="Opção 2"></div>
                     <div class="option-input-group"><input type="radio" name="correct-choice" value="2"><input type="text" class="input-premium opt-val" style="margin-bottom:0" placeholder="Opção 3"></div>
                     <div class="option-input-group"><input type="radio" name="correct-choice" value="3"><input type="text" class="input-premium opt-val" style="margin-bottom:0" placeholder="Opção 4"></div>
                 </div>
-                <button class="btn-premium" onclick="addQuestion()" style="background: var(--kandal-vinho); color: white; margin-top:15px;">Publicar</button>
+                <button class="btn-premium" onclick="addQuestion()" style="background: var(--kandal-vinho); color: white; margin-top:15px;">Publicar no Banco</button>
             </div>
             <div class="config-box">
                 <h3 style="color: var(--kandal-vinho); margin-bottom: 15px;">Banco de Perguntas</h3>
-                <div id="questions-list" style="max-height: 400px; overflow-y: auto;"></div>
+                <div id="questions-list" style="max-height: 450px; overflow-y: auto;"></div>
             </div>
         </div>
-        <button class="btn-premium" onclick="hideConfig()" style="margin-top: 20px;">Voltar</button>
+        <button class="btn-premium" onclick="hideConfig()" style="margin-top: 20px;">Voltar ao Menu</button>
     </div>
 
     <div id="game-screen" class="screen">
         <div class="stats-bar"><span id="question-number">Série 1</span><span id="score-display">🏆 0</span></div>
         <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
         <div id="question-container">
-            <p id="question-text" style="font-size: 1.2rem; text-align: center; margin-bottom: 25px;"></p>
+            <p id="question-text" style="font-size: 1.25rem; text-align: center; margin-bottom: 25px;"></p>
             <div id="options-quiz"></div>
         </div>
     </div>
 
     <div id="result-screen" class="screen" style="text-align: center;">
         <div class="header"><img src="logo_kandal.png" alt="Logo" style="width: 150px;"></div>
-        <h1 style="color: var(--kandal-vinho);">FINALIZADO</h1>
+        <h1 style="color: var(--kandal-vinho);">PROTOCOLADO</h1>
         <h2 id="result-rank" style="color: var(--kandal-rosa); margin: 20px 0;"></h2>
         <p id="result-score" style="font-size: 1.4rem;"></p>
-        <button class="btn-premium" onclick="location.reload()" style="margin-top: 30px;">Sair</button>
+        <button class="btn-premium" onclick="location.reload()" style="margin-top: 30px;">Reiniciar Sistema</button>
     </div>
 </div>
 
@@ -213,9 +214,7 @@
     if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
 
     const _0x5f21 = "YWRtaW4xMjM="; 
-    let questions = JSON.parse(localStorage.getItem('iron_questions')) || [
-        { q: "Qual o macronutriente principal para reparação?", options: ["Hidratos", "Gorduras", "Proteína", "Fibras"], correct: 2 }
-    ];
+    let questions = JSON.parse(localStorage.getItem('iron_questions')) || [];
     let highscores = JSON.parse(localStorage.getItem('iron_scores')) || [];
     let currentQuestionIndex = 0; let score = 0; let currentPlayer = "";
 
@@ -223,7 +222,7 @@
 
     function renderMainLeaderboard() {
         const body = document.querySelector('#main-leaderboard tbody');
-        body.innerHTML = highscores.slice(0, 5).map(h => `<tr><td>${h.name}</td><td>${h.score}</td><td>${h.date}</td></tr>`).join('') || '<tr><td colspan="3">Sem registos</td></tr>';
+        body.innerHTML = highscores.slice(0, 5).map(h => `<tr><td>${h.name}</td><td>${h.score}</td><td>${h.date}</td></tr>`).join('') || '<tr><td colspan="3">Sem registos de elite</td></tr>';
     }
 
     function checkAccess() {
@@ -247,7 +246,8 @@
 
     function startGame() {
         currentPlayer = document.getElementById('player-name').value.trim();
-        if (!currentPlayer) return alert("Insere o teu nome.");
+        if (!currentPlayer) return alert("Insere o teu nome de atleta.");
+        if (questions.length === 0) return alert("Banco de dados vazio. Adiciona perguntas no Admin.");
         score = 0; currentQuestionIndex = 0;
         document.getElementById('start-screen').classList.remove('active');
         document.getElementById('game-screen').classList.add('active');
@@ -290,7 +290,7 @@
         highscores.push({ name: currentPlayer, score: score, date: new Date().toLocaleDateString() });
         highscores.sort((a, b) => b.score - a.score);
         localStorage.setItem('iron_scores', JSON.stringify(highscores));
-        document.getElementById('result-rank').innerText = score >= (questions.length * 160) ? "KANDAL LEGEND" : "ATHLETE";
+        document.getElementById('result-rank').innerText = score >= (questions.length * 160) ? "KANDAL LEGEND" : "PROSPECT";
     }
 
     function addQuestion() {
@@ -306,7 +306,6 @@
         }
     }
 
-    // NOVA FUNÇÃO: MOVER ORDEM
     function moveQuestion(index, direction) {
         const newIndex = index + direction;
         if (newIndex >= 0 && newIndex < questions.length) {
@@ -318,7 +317,7 @@
     }
 
     function removeQuestion(i) {
-        if(confirm("Eliminar pergunta?")) {
+        if(confirm("Eliminar esta pergunta do sistema?")) {
             questions.splice(i, 1);
             saveAndRender();
         }
@@ -333,14 +332,14 @@
         const list = document.getElementById('questions-list');
         list.innerHTML = questions.map((q, i) => `
             <div class="q-list-item">
-                <span style="flex:1;">#${i+1} ${q.q.substring(0, 20)}...</span>
+                <div class="q-text-full"><strong style="color:var(--kandal-vinho)">#${i+1}</strong> ${q.q}</div>
                 <div class="order-controls">
-                    <button class="btn-order" onclick="moveQuestion(${i}, -1)" ${i === 0 ? 'disabled style="opacity:0.3"' : ''}>↑</button>
-                    <button class="btn-order" onclick="moveQuestion(${i}, 1)" ${i === questions.length - 1 ? 'disabled style="opacity:0.3"' : ''}>↓</button>
-                    <button onclick="removeQuestion(${i})" style="color:var(--error); background:none; border:none; margin-left:10px; cursor:pointer; font-weight:bold;">X</button>
+                    <button class="btn-order" onclick="moveQuestion(${i}, -1)" ${i === 0 ? 'disabled style="opacity:0.2"' : ''}>↑</button>
+                    <button class="btn-order" onclick="moveQuestion(${i}, 1)" ${i === questions.length - 1 ? 'disabled style="opacity:0.2"' : ''}>↓</button>
+                    <button onclick="removeQuestion(${i})" style="color:var(--error); background:none; border:none; margin-left:15px; cursor:pointer; font-weight:bold; font-size:0.7rem;">ELIMINAR</button>
                 </div>
             </div>
-        `).join('');
+        `).join('') || '<p style="text-align:center; opacity:0.5; padding:20px;">Nenhuma pergunta no banco.</p>';
     }
 </script>
 
