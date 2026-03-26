@@ -1,300 +1,360 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Kandal Gym: Legends</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kandal Gym: Elite Quiz</title>
     
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#8b2331">
     <link rel="manifest" href="manifest.json">
-    
-    <link rel="icon" type="image/png" href="icon_kandal.png">
-    <link rel="apple-touch-icon" href="icon_kandal.png">
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
-    
+    <link rel="apple-touch-icon" href="logo_kandal.png">
+
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Inter', sans-serif; touch-action: none; }
-        
-        #start-screen { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #000; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; z-index: 999; color: #fff; 
-        }
-        #menu-logo { width: 150px; margin-bottom: 20px; }
-        
-        #rules-box {
-            background: rgba(255, 255, 255, 0.1); border-radius: 15px;
-            padding: 15px; margin-bottom: 20px; width: 280px; font-size: 13px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        #rules-box h4 { margin: 0 0 10px 0; font-family: 'Anton'; color: #ff416c; text-transform: uppercase; }
-
-        .btn-kandal { 
-            background: #fff; color: #000; border: none; border-radius: 12px; 
-            padding: 18px; font-size: 22px; cursor: pointer; font-family: 'Anton'; 
-            text-transform: uppercase; width: 280px; margin-bottom: 15px;
+        :root {
+            --kandal-vinho: #8b2331; 
+            --kandal-rosa: #d8a3a9;
+            --dark-bg: #121212;
+            --card-bg: #1e1e1e;
+            --text-gray: #e0e0e0;
+            --silver: #c0c0c0;
+            --error: #8b0000;
+            --success: #2ecc71;
         }
 
-        #install-btn {
-            background: #ffae00; color: #000; font-size: 16px; padding: 10px;
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-gray);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            height: 90vh;
+            background: var(--dark-bg);
+            border: 4px solid var(--kandal-vinho);
+            border-radius: 40px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            padding: 20px;
+            transition: all 0.5s ease;
+        }
+
+        .app-container.expanded { max-width: 950px; }
+
+        .screen {
             display: none;
+            flex-direction: column;
+            height: 100%;
+            animation: fadeIn 0.5s ease;
+            overflow-y: auto;
+            padding: 10px;
         }
 
-        #high-scores {
-            width: 280px; background: rgba(255, 255, 255, 0.05); border-radius: 12px;
-            padding: 12px; border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .score-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
+        .active { display: flex; }
 
-        #ui { position: absolute; top: 50px; left: 20px; z-index: 50; display: none; background: rgba(255, 255, 255, 0.9); padding: 15px; border-radius: 20px; }
-        #pause-btn {
-            position: absolute; top: 50px; right: 20px; z-index: 100; display: none;
-            background: #fff; border: none; border-radius: 50%; width: 45px; height: 45px;
-            font-family: 'Anton'; font-size: 18px; font-weight: bold; cursor: pointer;
-        }
-        #pause-screen {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); display: none; flex-direction: column;
-            align-items: center; justify-content: center; z-index: 200; color: #fff;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        #score { font-family: 'Anton'; font-size: 45px; color: #111; line-height: 1; }
-        #hp-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #ff416c, #ff4b2b); transition: width 0.3s; }
-        #evo-msg { position: absolute; width: 100%; top: 35%; text-align: center; font-family: 'Anton'; font-size: 45px; color: #ffae00; display: none; z-index: 100; text-shadow: 3px 3px 0 #000; pointer-events: none; }
-        
-        #game-over { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(255,255,255,0.98); display: none; flex-direction: column; 
-            align-items: center; justify-content: center; z-index: 110; 
+        .header { text-align: center; margin-bottom: 20px; }
+        .logo-main { width: 180px; height: auto; margin-bottom: 10px; }
+
+        .btn-premium {
+            background: transparent;
+            border: 2px solid var(--kandal-vinho);
+            color: var(--kandal-vinho);
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px 0;
+            width: 100%;
         }
-        
-        canvas { display: block; background: #fff; }
+
+        .btn-premium:hover { background: var(--kandal-vinho); color: white; }
+
+        .btn-admin-hidden {
+            border: none; color: var(--silver); font-size: 0.7rem; 
+            margin-top: 20px; opacity: 0.5; background: none; cursor: pointer; width: 100%;
+        }
+        @media (max-width: 768px) { .btn-admin-hidden { display: none !important; } }
+
+        .input-premium {
+            background: #222; border: 1px solid #444; color: white;
+            padding: 12px; margin-bottom: 10px; border-radius: 8px; width: 100%;
+        }
+
+        .config-grid { display: grid; grid-template-columns: 1fr; gap: 30px; }
+        @media (min-width: 800px) { .config-grid { grid-template-columns: 1.2fr 0.8fr; } }
+
+        .q-list-item {
+            background: #222;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-left: 4px solid var(--kandal-vinho);
+        }
+
+        .q-text-full { font-size: 0.9rem; line-height: 1.4; word-break: break-word; }
+
+        .order-controls { 
+            display: flex; gap: 8px; justify-content: flex-end; 
+            border-top: 1px solid #333; padding-top: 8px;
+        }
+
+        .btn-order {
+            background: #333; color: white; border: none; 
+            padding: 5px 12px; border-radius: 4px; cursor: pointer;
+        }
+        .btn-order:hover:not(:disabled) { background: var(--kandal-vinho); }
+
+        .stats-bar { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--silver); margin-bottom: 10px; }
+        .progress-bar { width: 100%; height: 4px; background: #333; border-radius: 2px; margin-bottom: 30px; }
+        .progress-fill { height: 100%; background: var(--kandal-vinho); width: 0%; transition: width 0.4s; }
+
+        .quiz-option {
+            background: var(--card-bg); border: 1px solid #444; color: var(--text-gray);
+            padding: 16px; border-radius: 15px; margin-bottom: 10px; cursor: pointer; width: 100%;
+        }
+
+        .correct { border-color: var(--success) !important; background: rgba(46, 204, 113, 0.1); }
+        .wrong { border-color: var(--error) !important; background: rgba(139, 0, 0, 0.1); }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
+        th { color: var(--kandal-vinho); text-align: left; padding: 10px; border-bottom: 1px solid var(--kandal-vinho); }
+        td { padding: 10px; border-bottom: 1px solid #333; }
+
+        .footer-logo { text-align: center; font-size: 0.7rem; opacity: 0.4; margin-top: auto; padding-top: 20px; }
     </style>
 </head>
 <body>
 
-<div id="start-screen">
-    <img src="logo_kandal.png" id="menu-logo">
-    <div id="rules-box">
-        <h4>Regras do Ginásio:</h4>
-        <ul style="padding-left:18px; margin:0; color:#ddd; list-style: square;">
-            <li>Proteína/Legumes: <b>+ Energia</b></li>
-            <li>Lixo/Doces: <b>- Energia</b></li>
-            <li>Ronnie Coleman a cada <b>800 pts</b>!</li>
-        </ul>
-    </div>
-    <button class="btn-kandal" onclick="iniciarJogo()">COMEÇAR TREINO</button>
-    <button id="install-btn" class="btn-kandal" onclick="instalarApp()">INSTALAR APP</button>
-    <div id="high-scores">
-        <h3 style="margin:0 0 8px 0; font-family:'Anton'; font-size:14px; text-align:center; color:#ffae00;">MELHORES TREINOS</h3>
-        <div id="scores-list"></div>
-    </div>
-</div>
-
-<button id="pause-btn" onclick="alternarPausa()">||</button>
-
-<div id="pause-screen">
-    <h1 style="font-family:'Anton'; font-size:50px; margin-bottom:20px;">PAUSA</h1>
-    <button class="btn-kandal" onclick="alternarPausa()">CONTINUAR</button>
-    <button class="btn-kandal" style="background:transparent; color:#fff; border:2px solid #fff;" onclick="location.reload()">SAIR</button>
-</div>
-
-<div id="ui">
-    <div style="font-size:10px; font-weight:900; color:#555;">ENERGIA MUSCULAR</div>
-    <div style="width:150px; height:8px; background:#ddd; border-radius:10px; overflow:hidden; margin: 5px 0;">
-        <div id="hp-bar" style="width:100%;"></div>
-    </div>
-    <div id="score">0</div>
-</div>
-
-<div id="evo-msg">EVOLUÇÃO!</div>
-
-<div id="game-over">
-    <h2 style="font-family:'Anton'; font-size:50px; color:#d00; margin:0;">OVERTRAINING</h2>
-    <p id="final-score-txt" style="font-size:35px; font-weight:900; margin: 20px 0; color:#000;">--- PTS</p>
+<div class="app-container" id="main-container">
     
-    <button class="btn-kandal" style="background:#000; color:#fff;" onclick="iniciarJogo()">REPETIR TREINO</button>
-    <button class="btn-kandal" style="background:transparent; color:#000; border:2px solid #000;" onclick="voltarAoMenu()">MENU PRINCIPAL</button>
-</div>
+    <div id="start-screen" class="screen active">
+        <div class="header">
+            <img src="logo_kandal.png" alt="Kandal Gym Logo" class="logo-main">
+            <p style="font-size: 0.7rem; letter-spacing: 4px; color: var(--kandal-rosa);">QUIZ DE TREINO</p>
+        </div>
+        <input type="text" id="player-name" class="input-premium" style="text-align: center;" placeholder="NOME DO ATLETA">
+        <button class="btn-premium" onclick="startGame()">Iniciar Protocolo</button>
+        
+        <div style="margin-top: 30px;">
+            <h3 style="color: var(--kandal-vinho); font-size: 0.9rem; margin-bottom: 10px; text-align: center;">🏆 TOP PERFORMERS</h3>
+            <table id="main-leaderboard">
+                <thead><tr><th>Atleta</th><th>Score</th><th>Data</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <button class="btn-admin-hidden" onclick="checkAccess()">Acesso Admin</button>
+        <div class="footer-logo">KANDAL GYM PREMIUM GAINS 2026</div>
+    </div>
 
-<canvas id="gameCanvas"></canvas>
+    <div id="config-screen" class="screen">
+        <div class="header">
+            <img src="logo_kandal.png" alt="Logo" style="width: 100px;">
+            <h1 style="color: var(--kandal-vinho); font-size: 1.5rem;">Gestão de Dados</h1>
+        </div>
+        <div class="config-grid">
+            <div class="config-box">
+                <h3 style="color: var(--kandal-vinho); margin-bottom: 15px;">Nova Pergunta</h3>
+                <input type="text" id="new-q" class="input-premium" placeholder="Escreva a pergunta completa...">
+                <div id="options-inputs">
+                    <div class="option-input-group"><input type="radio" name="correct-choice" value="0" checked><input type="text" class="input-premium opt-val" style="margin-bottom:0" placeholder="Opção 1"></div>
+                    <div class="option-input-group"><input type="radio" name="correct-choice" value="1"><input type="text" class="input-premium opt-val" style="margin-bottom:0" placeholder="Opção 2"></div>
+                    <div class="option-input-group"><input type="radio" name="correct-choice" value="3"><input type="text" class="input-premium opt-val" style="margin-bottom:0" placeholder="Opção 3"></div>
+                    <div class="option-input-group"><input type="radio" name="correct-choice" value="3"><input type="text" class="input-premium opt-val" style="margin-bottom:0" placeholder="Opção 4"></div>
+                </div>
+                <button class="btn-premium" onclick="addQuestion()" style="background: var(--kandal-vinho); color: white; margin-top:15px;">Publicar no Banco</button>
+            </div>
+            <div class="config-box">
+                <h3 style="color: var(--kandal-vinho); margin-bottom: 15px;">Banco de Perguntas</h3>
+                <div id="questions-list" style="max-height: 450px; overflow-y: auto;"></div>
+            </div>
+        </div>
+        <button class="btn-premium" onclick="hideConfig()" style="margin-top: 20px;">Voltar ao Menu</button>
+    </div>
+
+    <div id="game-screen" class="screen">
+        <div class="stats-bar"><span id="question-number">Série 1</span><span id="score-display">🏆 0</span></div>
+        <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+        <div id="question-container">
+            <p id="question-text" style="font-size: 1.25rem; text-align: center; margin-bottom: 25px;"></p>
+            <div id="options-quiz"></div>
+        </div>
+    </div>
+
+    <div id="result-screen" class="screen" style="text-align: center;">
+        <div class="header"><img src="logo_kandal.png" alt="Logo" style="width: 150px;"></div>
+        <h1 style="color: var(--kandal-vinho);">PROTOCOLADO</h1>
+        <h2 id="result-rank" style="color: var(--kandal-rosa); margin: 20px 0;"></h2>
+        <p id="result-score" style="font-size: 1.4rem;"></p>
+        <button class="btn-premium" onclick="location.reload()" style="margin-top: 30px;">Reiniciar Sistema</button>
+    </div>
+</div>
 
 <script>
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-const startScreen = document.getElementById("start-screen");
-const ui = document.getElementById("ui");
-const pauseBtn = document.getElementById("pause-btn");
-const pauseScreen = document.getElementById("pause-screen");
-const gameOverScreen = document.getElementById("game-over");
-const evoMsg = document.getElementById("evo-msg");
-const installBtn = document.getElementById("install-btn");
+    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
 
-let jogoIniciado = false, emPausa = false;
-let jogador, score, obstaculos, touchX, transformando, lastMilestone = 0, lastTime = 0;
-let deferredPrompt;
+    const _0x5f21 = "YWRtaW4xMjM="; 
 
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    installBtn.style.display = 'block';
-});
+    // PERGUNTAS DE FÁBRICA PARA APARECEREM NO GITHUB
+    const starterQuestions = [
+        { q: "Qual a importância de beber água durante o treino?", options: ["Para ficar mais pesado", "Hidratação e performance", "Para não ter fome", "Não é importante"], correct: 1 },
+        { q: "O que deves fazer antes de começar um treino intenso?", options: ["Dormir 10 minutos", "Aquecimento muscular", "Comer um bife", "Nada, começar logo"], correct: 1 },
+        { q: "Qual destes alimentos é uma fonte de proteína?", options: ["Arroz", "Alface", "Frango", "Maçã"], correct: 2 },
+        { q: "O 'Descanso' é importante para o ganho de massa muscular?", options: ["Não, atrasa os ganhos", "Sim, o músculo recupera", "Só se estiveres cansado", "Apenas para idosos"], correct: 1 },
+        { q: "O que é o 'Agachamento'?", options: ["Exercício de peito", "Exercício de braços", "Exercício de pernas", "Exercício de pescoço"], correct: 2 }
+    ];
 
-async function instalarApp() {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') installBtn.style.display = 'none';
-    deferredPrompt = null;
-}
-
-const somRonnie = new Audio('lightweight.mp3');
-function tocarSom() { somRonnie.currentTime = 0; somRonnie.play().catch(e => {}); }
-
-const imagens = {};
-const comida = ['chocolate', 'gelado', 'hamburguer', 'cachorro', 'francesinha', 'proteina', 'legumes', 'energetico'];
-const herois = ['boneco_magro', 'boneco_musculado', 'cbum', 'ronnie', 'arnaldo'];
-
-comida.forEach(n => { imagens[n] = new Image(); imagens[n].src = n + '.png'; });
-herois.forEach(n => { imagens[n] = new Image(); imagens[n].src = n + '.png'; });
-
-function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-window.addEventListener('resize', resize); resize();
-
-function atualizarTabela() {
-    let r = JSON.parse(localStorage.getItem('kandal_top')) || [0, 0, 0];
-    document.getElementById("scores-list").innerHTML = r.map((s, i) => `
-        <div class="score-row"><span>${i+1}º</span> <b>${s} pts</b></div>
-    `).join('');
-}
-
-function salvarRecorde(s) {
-    let r = JSON.parse(localStorage.getItem('kandal_top')) || [0, 0, 0];
-    r.push(s); r.sort((a,b) => b-a);
-    localStorage.setItem('kandal_top', JSON.stringify(r.slice(0, 3)));
-    atualizarTabela();
-}
-
-function iniciarJogo() {
-    somRonnie.load();
-    jogador = { w: 75, h: 115, x: canvas.width/2 - 37, y: canvas.height-170, speed: 520, hp: 100, nivel: 'boneco_magro' };
-    score = 0; lastMilestone = 0; obstaculos = []; touchX = null; transformando = false; emPausa = false; jogoIniciado = true;
-    lastTime = performance.now();
-    document.getElementById("hp-bar").style.width = "100%";
-    document.getElementById("score").innerText = "0";
-    startScreen.style.display = "none";
-    gameOverScreen.style.display = "none";
-    pauseScreen.style.display = "none";
-    ui.style.display = "block";
-    pauseBtn.style.display = "block";
-}
-
-function voltarAoMenu() {
-    jogoIniciado = false;
-    gameOverScreen.style.display = "none";
-    ui.style.display = "none";
-    pauseBtn.style.display = "none";
-    startScreen.style.display = "flex";
-    atualizarTabela();
-}
-
-function terminarJogo() {
-    jogoIniciado = false;
-    const finalScore = score;
-    document.getElementById("final-score-txt").innerText = finalScore + " PTS";
-    salvarRecorde(finalScore);
-    ui.style.display = "none";
-    pauseBtn.style.display = "none";
-    gameOverScreen.style.display = "flex";
-}
-
-function alternarPausa() {
-    if (!jogoIniciado) return;
-    emPausa = !emPausa;
-    pauseScreen.style.display = emPausa ? "flex" : "none";
-    if (!emPausa) lastTime = performance.now();
-}
-
-window.ontouchstart = (e) => { if(!emPausa) touchX = e.touches[0].clientX; };
-window.ontouchmove = (e) => { if(!emPausa) touchX = e.touches[0].clientX; };
-window.ontouchend = () => touchX = null;
-
-class Obj {
-    constructor() {
-        this.n = comida[Math.floor(Math.random() * comida.length)];
-        this.bom = ['proteina', 'legumes', 'energetico'].includes(this.n);
-        this.s = 65; this.x = Math.random() * (canvas.width - this.s); this.y = -this.s;
-        this.v = (280 + (score / 6));
+    // Lógica para carregar as perguntas certas
+    let questions = JSON.parse(localStorage.getItem('iron_questions'));
+    if (!questions || questions.length === 0) {
+        questions = starterQuestions;
+        localStorage.setItem('iron_questions', JSON.stringify(questions));
     }
-    draw(dt) {
-        const img = imagens[this.n];
-        if (img && img.complete) ctx.drawImage(img, this.x, this.y, this.s, this.s);
-        if (!transformando && !emPausa) this.y += this.v * dt;
+
+    let highscores = JSON.parse(localStorage.getItem('iron_scores')) || [];
+    let currentQuestionIndex = 0; let score = 0; let currentPlayer = "";
+
+    window.onload = renderMainLeaderboard;
+
+    function renderMainLeaderboard() {
+        const body = document.querySelector('#main-leaderboard tbody');
+        body.innerHTML = highscores.slice(0, 5).map(h => `<tr><td>${h.name}</td><td>${h.score}</td><td>${h.date}</td></tr>`).join('') || '<tr><td colspan="3">Sem registos de elite</td></tr>';
     }
-}
 
-function dispararEvolucao(msg, nivel, vel) {
-    transformando = true; tocarSom();
-    evoMsg.innerText = msg; evoMsg.style.display = "block";
-    setTimeout(() => {
-        jogador.nivel = nivel; jogador.speed = vel;
-        jogador.w = 110; jogador.h = 175; jogador.y = canvas.height - 230;
-        transformando = false; evoMsg.style.display = "none";
-    }, 1200);
-}
-
-function loop(currentTime) {
-    if (emPausa) { requestAnimationFrame(loop); return; }
-    const dt = (currentTime - lastTime) / 1000;
-    lastTime = currentTime;
-    ctx.clearRect(0, 0, canvas.width, canvas.height); 
-
-    if (jogoIniciado) {
-        if (touchX !== null) {
-            let centro = jogador.x + jogador.w / 2;
-            let dist = touchX - centro;
-            if (Math.abs(dist) > 5) jogador.x += (dist > 0 ? 1 : -1) * jogador.speed * dt;
-        }
-        if (jogador.x < 0) jogador.x = 0;
-        if (jogador.x > canvas.width - jogador.w) jogador.x = canvas.width - jogador.w;
-
-        if (score > 0 && score >= lastMilestone + 800) { tocarSom(); lastMilestone = score; }
-
-        // LOGICA DE EVOLUÇÃO CORRIGIDA
-        if (score >= 1000 && score < 2000 && jogador.nivel === 'boneco_magro') {
-            dispararEvolucao("MONSTRO KANDAL!", "boneco_musculado", 560);
-        } else if (score >= 2000 && score < 4000 && jogador.nivel === 'boneco_musculado') {
-            dispararEvolucao("CBUM ATIVADO!", "cbum", 620);
-        } else if (score >= 4000 && score < 6000 && jogador.nivel === 'cbum') {
-            dispararEvolucao("LIGHTWEIGHT BABY!", "ronnie", 680);
-        } else if (score >= 6000 && jogador.nivel === 'ronnie') {
-            dispararEvolucao("ARNOLD STYLE!", "arnaldo", 750);
-        }
-
-        const imgP = imagens[jogador.nivel];
-        if (imgP && imgP.complete) ctx.drawImage(imgP, jogador.x, jogador.y, jogador.w, jogador.h);
-        
-        if (Math.random() < 0.035 && !transformando) obstaculos.push(new Obj());
-        
-        for (let i = obstaculos.length - 1; i >= 0; i--) {
-            const o = obstaculos[i]; o.draw(dt);
-            if (jogador.x + 15 < o.x + o.s - 15 && jogador.x + jogador.w - 15 > o.x + 15 && 
-                jogador.y + 15 < o.y + o.s - 15 && jogador.y + jogador.h - 15 > o.y + 10) {
-                if (o.bom) { score += 100; jogador.hp = Math.min(100, jogador.hp + 5); }
-                else { jogador.hp -= 22; }
-                document.getElementById("hp-bar").style.width = Math.max(0, jogador.hp) + "%";
-                document.getElementById("score").innerText = score;
-                obstaculos.splice(i, 1);
-            } else if (o.y > canvas.height) { obstaculos.splice(i, 1); }
-        }
-        if (jogador.hp <= 0) terminarJogo();
+    function checkAccess() {
+        const pass = prompt("Chave Admin:");
+        if (btoa(pass) === _0x5f21) showConfig();
     }
-    requestAnimationFrame(loop);
-}
-atualizarTabela();
-requestAnimationFrame(loop);
+
+    function showConfig() {
+        document.getElementById('main-container').classList.add('expanded');
+        document.getElementById('start-screen').classList.remove('active');
+        document.getElementById('config-screen').classList.add('active');
+        renderQuestionList();
+    }
+
+    function hideConfig() {
+        document.getElementById('main-container').classList.remove('expanded');
+        document.getElementById('config-screen').classList.remove('active');
+        document.getElementById('start-screen').classList.add('active');
+        renderMainLeaderboard();
+    }
+
+    function startGame() {
+        currentPlayer = document.getElementById('player-name').value.trim();
+        if (!currentPlayer) return alert("Insere o teu nome de atleta.");
+        score = 0; currentQuestionIndex = 0;
+        document.getElementById('start-screen').classList.remove('active');
+        document.getElementById('game-screen').classList.add('active');
+        showQuestion();
+    }
+
+    function showQuestion() {
+        const q = questions[currentQuestionIndex];
+        document.getElementById('question-text').innerText = q.q;
+        document.getElementById('question-number').innerText = `Série ${currentQuestionIndex + 1}/${questions.length}`;
+        document.getElementById('progress-fill').style.width = `${(currentQuestionIndex / questions.length) * 100}%`;
+        const optionsDiv = document.getElementById('options-quiz');
+        optionsDiv.innerHTML = '';
+        q.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'quiz-option'; btn.innerText = opt;
+            btn.onclick = () => checkAnswer(index, btn);
+            optionsDiv.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selected, btn) {
+        const correct = questions[currentQuestionIndex].correct;
+        const allBtns = document.querySelectorAll('.quiz-option');
+        allBtns.forEach(b => b.style.pointerEvents = 'none');
+        if (selected === correct) { btn.classList.add('correct'); score += 200; } 
+        else { btn.classList.add('wrong'); allBtns[correct].classList.add('correct'); }
+        document.getElementById('score-display').innerText = `🏆 ${score}`;
+        setTimeout(() => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) showQuestion();
+            else showResults();
+        }, 1200);
+    }
+
+    function showResults() {
+        document.getElementById('game-screen').classList.remove('active');
+        document.getElementById('result-screen').classList.add('active');
+        document.getElementById('result-score').innerText = `${currentPlayer} • ${score} PTS`;
+        highscores.push({ name: currentPlayer, score: score, date: new Date().toLocaleDateString() });
+        highscores.sort((a, b) => b.score - a.score);
+        localStorage.setItem('iron_scores', JSON.stringify(highscores));
+        document.getElementById('result-rank').innerText = score >= (questions.length * 160) ? "KANDAL LEGEND" : "PROSPECT";
+    }
+
+    function addQuestion() {
+        const q = document.getElementById('new-q').value.trim();
+        const optElements = document.querySelectorAll('.opt-val');
+        const correctIdx = parseInt(document.querySelector('input[name="correct-choice"]:checked').value);
+        const opts = []; optElements.forEach(el => { if(el.value.trim()) opts.push(el.value.trim()); });
+        if(q && opts.length >= 2) {
+            questions.push({ q, options: opts, correct: correctIdx });
+            saveAndRender();
+            document.getElementById('new-q').value = "";
+            optElements.forEach(el => el.value = "");
+        }
+    }
+
+    function moveQuestion(index, direction) {
+        const newIndex = index + direction;
+        if (newIndex >= 0 && newIndex < questions.length) {
+            const temp = questions[index];
+            questions[index] = questions[newIndex];
+            questions[newIndex] = temp;
+            saveAndRender();
+        }
+    }
+
+    function removeQuestion(i) {
+        if(confirm("Eliminar esta pergunta do sistema?")) {
+            questions.splice(i, 1);
+            saveAndRender();
+        }
+    }
+
+    function saveAndRender() {
+        localStorage.setItem('iron_questions', JSON.stringify(questions));
+        renderQuestionList();
+    }
+
+    function renderQuestionList() {
+        const list = document.getElementById('questions-list');
+        list.innerHTML = questions.map((q, i) => `
+            <div class="q-list-item">
+                <div class="q-text-full"><strong style="color:var(--kandal-vinho)">#${i+1}</strong> ${q.q}</div>
+                <div class="order-controls">
+                    <button class="btn-order" onclick="moveQuestion(${i}, -1)" ${i === 0 ? 'disabled style="opacity:0.2"' : ''}>↑</button>
+                    <button class="btn-order" onclick="moveQuestion(${i}, 1)" ${i === questions.length - 1 ? 'disabled style="opacity:0.2"' : ''}>↓</button>
+                    <button onclick="removeQuestion(${i})" style="color:var(--error); background:none; border:none; margin-left:15px; cursor:pointer; font-weight:bold; font-size:0.7rem;">ELIMINAR</button>
+                </div>
+            </div>
+        `).join('') || '<p style="text-align:center; opacity:0.5; padding:20px;">Nenhuma pergunta no banco.</p>';
+    }
 </script>
+
 </body>
 </html>
