@@ -1,15 +1,35 @@
 {
-  "name": "Kandal Gym Quiz",
+  "name": "Kandal Gym: Elite Quiz",
   "short_name": "KandalQuiz",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#121212",
   "theme_color": "#8b2331",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "logo_kandal.png",
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+     {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
