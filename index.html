@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kandal Gym: Elite Quiz</title>
+    <style>
+        :root {
+            /* CORES ATUALIZADAS KANDAL GYM */
+            --kandal-vinho: #8b2331; 
+            --kandal-rosa: #d8a3a9;
+            --dark-bg: #121212;
+            --card-bg: #1e1e1e;
+            --text-gray: #e0e0e0;
+            --silver: #c0c0c0;
+            --error: #8b0000;
+            --success: #2ecc71;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-gray);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            height: 90vh;
+            background: var(--dark-bg);
+            /* Borda alterada para Vinho */
+            border: 4px solid var(--kandal-vinho);
+            border-radius: 40px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            padding: 20px;
+            transition: all 0.5s ease;
+        }
+
+        .app-container.expanded { max-width: 950px; }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            animation: fadeIn 0.5s ease;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .active { display: flex; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header { text-align: center; margin-bottom: 20px; }
+        
+        /* Estilo do Logo */
+        .logo-main {
+            width: 180px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .btn-premium {
+            background: transparent;
+            border: 2px solid var(--kandal-vinho);
+            color: var(--kandal-vinho);
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px 0;
+            width: 100%;
+        }
+
+        .btn-premium:hover { 
+            background: var(--kandal-vinho); 
+            color: white; 
+            border-color: var(--kandal-rosa);
+        }
+
+        .input-premium {
+            background: #222;
+            border: 1px solid #444;
+            color: white;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            width: 100%;
+        }
+
+        .input-premium:focus { border-color: var(--kandal-vinho); outline: none; }
+
+        /* Grid Configuração */
+        .config-grid { display: grid; grid-template-columns: 1fr; gap: 30px; }
+        @media (min-width: 800px) { .config-grid { grid-template-columns: 1.2fr 0.8fr; } }
+
+        .option-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .radio-correct {
+            accent-color: var(--kandal-vinho);
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .stats-bar { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--silver); margin-bottom: 10px; }
+        .progress-bar { width: 100%; height: 4px; background: #333; border-radius: 2px; margin-bottom: 30px; }
+        .progress-fill { height: 100%; background: var(--kandal-vinho); width: 0%; transition: width 0.4s; }
+
+        .quiz-option {
+            background: var(--card-bg);
+            border: 1px solid #444;
+            color: var(--text-gray);
+            padding: 16px;
+            border-radius: 15px;
+            text-align: left;
+            margin-bottom: 10px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .correct { border-color: var(--success) !important; background: rgba(46, 204, 113, 0.1); }
+        .wrong { border-color: var(--error) !important; background: rgba(139, 0, 0, 0.1); }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
+        th { color: var(--kandal-vinho); text-align: left; padding: 10px; border-bottom: 1px solid var(--kandal-vinho); }
+        td { padding: 10px; border-bottom: 1px solid #333; }
+
+        .q-list-item {
+            background: #222;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            border-left: 3px solid var(--kandal-vinho);
+        }
+
+        .footer-logo { text-align: center; font-size: 0.7rem; opacity: 0.4; margin-top: auto; padding-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="app-container" id="main-container">
+    
+    <div id="start-screen" class="screen active">
+        <div class="header">
+            <img src="logo_kandal.png" alt="Kandal Gym Logo" class="logo-main">
+            <p style="font-size: 0.7rem; letter-spacing: 4px; color: var(--kandal-rosa);">QUIZ DE TREINO</p>
+        </div>
+        
+        <input type="text" id="player-name" class="input-premium" style="text-align: center;" placeholder="NOME DO ATLETA">
+        <button class="btn-premium" onclick="startGame()">Iniciar Protocolo</button>
+        
+        <div style="margin-top: 30px;">
+            <h3 style="color: var(--kandal-vinho); font-size: 0.9rem; margin-bottom: 10px; text-align: center;">🏆 TOP PERFORMERS</h3>
+            <table id="main-leaderboard">
+                <thead><tr><th>Atleta</th><th>Score</th><th>Data</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <button class="btn-premium" onclick="checkAccess()" style="border: none; color: var(--silver); font-size: 0.7rem; margin-top: 20px; opacity: 0.5;">Acesso Admin</button>
+        <div class="footer-logo">KANDAL GYM PREMIUM GAINS 2026</div>
+    </div>
+
+    <div id="config-screen" class="screen">
+        <div class="header">
+            <img src="logo_kandal.png" alt="Logo" style="width: 100px; margin-bottom: 10px;">
+            <h1 style="color: var(--kandal-vinho); font-size: 1.5rem;">Gestão de Dados</h1>
+        </div>
+        
+        <div class="config-grid">
+            <div class="config-box">
+                <h3 style="color: var(--kandal-vinho); margin-bottom: 15px;">Nova Pergunta</h3>
+                <label style="font-size: 0.8rem; display: block; margin-bottom: 5px;">Enunciado:</label>
+                <input type="text" id="new-q" class="input-premium" placeholder="Ex: Qual a função principal da Creatina?">
+                
+                <label style="font-size: 0.8rem; display: block; margin-bottom: 10px;">Opções (Assinale a correta):</label>
+                
+                <div id="options-inputs">
+                    <div class="option-input-group">
+                        <input type="radio" name="correct-choice" value="0" class="radio-correct" checked>
+                        <input type="text" class="input-premium opt-val" style="margin-bottom:0" placeholder="Opção 1">
+                    </div>
+                    <div class="option-input-group">
+                        <input type="radio" name="correct-choice" value="1" class="radio-correct">
+                        <input type="text" class="input-premium opt-val" style="margin-bottom:0" placeholder="Opção 2">
+                    </div>
+                    <div class="option-input-group">
+                        <input type="radio" name="correct-choice" value="2" class="radio-correct">
+                        <input type="text" class="input-premium opt-val" style="margin-bottom:0" placeholder="Opção 3">
+                    </div>
+                    <div class="option-input-group">
+                        <input type="radio" name="correct-choice" value="3" class="radio-correct">
+                        <input type="text" class="input-premium opt-val" style="margin-bottom:0" placeholder="Opção 4">
+                    </div>
+                </div>
+
+                <button class="btn-premium" onclick="addQuestion()" style="margin-top: 15px; background: var(--kandal-vinho); color: white; border: none;">Publicar Pergunta</button>
+            </div>
+
+            <div class="config-box">
+                <h3 style="color: var(--kandal-vinho); margin-bottom: 15px;">Banco de Perguntas</h3>
+                <div id="questions-list" style="max-height: 400px; overflow-y: auto; padding-right: 5px;"></div>
+            </div>
+        </div>
+        
+        <button class="btn-premium" onclick="hideConfig()" style="margin-top: 30px; border-color: var(--silver); color: var(--silver);">Voltar ao Início</button>
+    </div>
+
+    <div id="game-screen" class="screen">
+        <div class="stats-bar">
+            <span id="question-number">Série 1/5</span>
+            <span id="score-display">🏆 0</span>
+        </div>
+        <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+        <div id="question-container">
+            <p id="question-text" style="font-size: 1.3rem; text-align: center; margin-bottom: 30px; font-weight: 300;"></p>
+            <div id="options-quiz"></div>
+        </div>
+    </div>
+
+    <div id="result-screen" class="screen" style="text-align: center;">
+        <div class="header">
+            <img src="logo_kandal.png" alt="Logo" style="width: 150px; margin-bottom: 20px;">
+            <h1 style="color: var(--kandal-vinho);">SESSÃO FINALIZADA</h1>
+        </div>
+        <h2 id="result-rank" style="color: var(--kandal-rosa); margin-bottom: 10px; font-size: 2rem;"></h2>
+        <p id="result-score" style="font-size: 1.5rem; margin-bottom: 30px; opacity: 0.8;"></p>
+        <button class="btn-premium" onclick="location.reload()">Sair do Perfil</button>
+    </div>
+
+</div>
+
+<script>
+    const _0x5f21 = "YWRtaW4xMjM="; 
+
+    let questions = JSON.parse(localStorage.getItem('iron_questions')) || [
+        { q: "Qual o termo para o aumento do volume via sarcoplasma?", options: ["Hipertrofia Sarcoplasmática", "Hipertrofia Miofibrilar", "Hiperplasia", "Atrofia"], correct: 0 },
+        { q: "Qual o rei da cadeia posterior?", options: ["Leg Extension", "Bicep Curl", "Deadlift", "Chest Press"], correct: 2 }
+    ];
+
+    let highscores = JSON.parse(localStorage.getItem('iron_scores')) || [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let currentPlayer = "";
+
+    window.onload = renderMainLeaderboard;
+
+    function renderMainLeaderboard() {
+        const body = document.querySelector('#main-leaderboard tbody');
+        body.innerHTML = highscores.slice(0, 5).map(h => `
+            <tr><td>${h.name}</td><td>${h.score}</td><td>${h.date}</td></tr>
+        `).join('') || '<tr><td colspan="3" style="text-align:center; opacity:0.5">Sem registos de elite</td></tr>';
+    }
+
+    function checkAccess() {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if (isMobile) {
+            alert("SISTEMA BLOQUEADO: Utilize um PC para gerir o banco de dados.");
+            return;
+        }
+        const pass = prompt("Chave Admin:");
+        if (btoa(pass) === _0x5f21) showConfig();
+    }
+
+    function showConfig() {
+        document.getElementById('main-container').classList.add('expanded');
+        document.getElementById('start-screen').classList.remove('active');
+        document.getElementById('config-screen').classList.add('active');
+        renderQuestionList();
+    }
+
+    function hideConfig() {
+        document.getElementById('main-container').classList.remove('expanded');
+        document.getElementById('config-screen').classList.remove('active');
+        document.getElementById('start-screen').classList.add('active');
+        renderMainLeaderboard();
+    }
+
+    function startGame() {
+        currentPlayer = document.getElementById('player-name').value.trim();
+        if (!currentPlayer) return alert("Identifique-se para iniciar o registo.");
+        if (questions.length === 0) return alert("Banco de dados vazio.");
+        
+        score = 0; currentQuestionIndex = 0;
+        document.getElementById('start-screen').classList.remove('active');
+        document.getElementById('game-screen').classList.add('active');
+        showQuestion();
+    }
+
+    function showQuestion() {
+        const q = questions[currentQuestionIndex];
+        document.getElementById('question-text').innerText = q.q;
+        document.getElementById('question-number').innerText = `Série ${currentQuestionIndex + 1}/${questions.length}`;
+        document.getElementById('progress-fill').style.width = `${(currentQuestionIndex / questions.length) * 100}%`;
+        const optionsDiv = document.getElementById('options-quiz');
+        optionsDiv.innerHTML = '';
+        q.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'quiz-option';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(index, btn);
+            optionsDiv.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selected, btn) {
+        const correct = questions[currentQuestionIndex].correct;
+        const allBtns = document.querySelectorAll('.quiz-option');
+        allBtns.forEach(b => b.style.pointerEvents = 'none');
+
+        if (selected === correct) {
+            btn.classList.add('correct');
+            score += 200;
+            document.getElementById('score-display').innerText = `🏆 ${score}`;
+        } else {
+            btn.classList.add('wrong');
+            allBtns[correct].classList.add('correct');
+        }
+
+        setTimeout(() => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) showQuestion();
+            else showResults();
+        }, 1200);
+    }
+
+    function showResults() {
+        document.getElementById('game-screen').classList.remove('active');
+        document.getElementById('result-screen').classList.add('active');
+        document.getElementById('result-score').innerText = `${currentPlayer} • ${score} PTS`;
+        
+        highscores.push({
+            name: currentPlayer,
+            score: score,
+            date: new Date().toLocaleDateString()
+        });
+        highscores.sort((a, b) => b.score - a.score);
+        localStorage.setItem('iron_scores', JSON.stringify(highscores));
+
+        let rank = score >= (questions.length * 200 * 0.8) ? "KANDAL LEGEND" : score >= (questions.length * 200 * 0.5) ? "ELITE ATHLETE" : "CASUAL TRAINER";
+        document.getElementById('result-rank').innerText = rank;
+    }
+
+    function addQuestion() {
+        const q = document.getElementById('new-q').value.trim();
+        const optElements = document.querySelectorAll('.opt-val');
+        const correctIdx = parseInt(document.querySelector('input[name="correct-choice"]:checked').value);
+        
+        const opts = [];
+        optElements.forEach(el => {
+            if(el.value.trim()) opts.push(el.value.trim());
+        });
+
+        if(q && opts.length >= 2) {
+            questions.push({ q, options: opts, correct: correctIdx });
+            localStorage.setItem('iron_questions', JSON.stringify(questions));
+            renderQuestionList();
+            
+            document.getElementById('new-q').value = "";
+            optElements.forEach(el => el.value = "");
+            alert("Pergunta publicada com sucesso!");
+        } else {
+            alert("Preencha a pergunta e pelo menos duas opções.");
+        }
+    }
+
+    function removeQuestion(index) {
+        if(confirm("Deseja eliminar este registo do banco de dados?")) {
+            questions.splice(index, 1);
+            localStorage.setItem('iron_questions', JSON.stringify(questions));
+            renderQuestionList();
+        }
+    }
+
+    function renderQuestionList() {
+        const list = document.getElementById('questions-list');
+        list.innerHTML = questions.map((q, i) => `
+            <div class="q-list-item">
+                <span title="${q.q}"><strong>#${i+1}</strong> ${q.q.substring(0, 35)}${q.q.length > 35 ? '...' : ''}</span>
+                <button onclick="removeQuestion(${i})" style="color:var(--error); background:none; border:none; cursor:pointer; font-weight:bold;">EXCLUIR</button>
+            </div>
+        `).join('');
+    }
+</script>
+
+</body>
+</html>
